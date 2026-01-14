@@ -25,10 +25,11 @@ abstract class TransactionBase {
 	 * See \Wikimedia\FileBackend\FileBackend::doOperations
 	 * @param string $name
 	 * @param string $value
-	 * @return StorageTransaction
+	 * @return TransactionBase
 	 */
-	public function setOption( string $name, string $value ): StorageTransaction {
+	public function setOption( string $name, string $value ): TransactionBase {
 		$this->options[ $name ] = $value;
+
 		return $this;
 	}
 

@@ -3,7 +3,14 @@
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
 class TempFSFileBackend extends \FSFileBackend {
-	public function getTempFilePath( string $filename, string $path, bool $prepareDir = true ) {
+
+	/**
+	 * @param string $filename
+	 * @param string $path
+	 * @param bool $prepareDir
+	 * @return string|null
+	 */
+	public function getTempFilePath( string $filename, string $path, bool $prepareDir = true ): ?string {
 		$helper = new StorageHelper( $this );
 		if ( $prepareDir ) {
 			$dirPath = $helper->compileZonePath( $path, '' );

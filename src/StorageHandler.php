@@ -3,20 +3,25 @@
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
 use FSFile;
+use Traversable;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
 
 class StorageHandler {
 
+	public const BACKEND_TYPE_MAIN = 'main';
+	public const BACKEND_TYPE_TEMP = 'temp';
+	public const BACKEND_TYPE_INSTANCE = 'instance';
+
 	/**
 	 * @param FileBackend $fileBackend
 	 * @param FileBackend $tempBackend
-	 * @param FileBackend|null $globalBackend
+	 * @param FileBackend|null $instanceBackend
 	 */
 	public function __construct(
 		private readonly FileBackend $fileBackend,
 		private readonly FileBackend $tempBackend,
-		private readonly ?FileBackend $globalBackend = null
+		private readonly ?FileBackend $instanceBackend = null
 	) {
 	}
 
@@ -46,10 +51,12 @@ class StorageHandler {
 	/**
 	 * @param string $filename
 	 * @param string $path
+	 * @param FileBackend|null $backend
 	 * @return TempFSFile|null
 	 */
-	public function getFile( string $filename, string $path = '' ): ?StoredFile {
-		return $this->doGetStoredFile( $this->fileBackend, $filename, $path );
+	public function getFile( string $filename, string $path = '', ?FileBackend $backend = null ): ?StoredFile {
+		$backend = $backend ?? $this->fileBackend;
+		return $this->doGetStoredFile( $backend, $filename, $path );
 	}
 
 	/**
@@ -61,13 +68,20 @@ class StorageHandler {
 	}
 
 	/**
-	 * @return GlobalStorageTransaction
+	 * @return StorageTransaction
 	 */
-	public function newGlobalTransaction(): GlobalStorageTransaction {
-		if ( !$this->globalBackend ) {
+	public function newTempTransaction(): StorageTransaction {
+		return $this->newTransaction( true );
+	}
+
+	/**
+	 * @return InstanceTransaction
+	 */
+	public function newInstanceTransaction(): InstanceTransaction {
+		if ( !$this->instanceBackend ) {
 			throw new \RuntimeException( 'Global backend not configured' );
 		}
-		return new GlobalStorageTransaction( $this->globalBackend );
+		return new InstanceTransaction( $this->instanceBackend );
 	}
 
 	/**
@@ -75,7 +89,17 @@ class StorageHandler {
 	 * @return FileBackend
 	 */
 	public function getBackend( string $type = 'main' ): FileBackend {
-		return $type === 'temp' ? $this->tempBackend : $this->fileBackend;
+		switch ( $type ) {
+			case 'temp':
+				return $this->tempBackend;
+			case 'instance':
+				if ( !$this->instanceBackend ) {
+					throw new \RuntimeException( 'Global backend not configured' );
+				}
+				return $this->instanceBackend;
+			default:
+				return $this->fileBackend;
+		}
 	}
 
 	/**

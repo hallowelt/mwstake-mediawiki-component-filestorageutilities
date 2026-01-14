@@ -9,8 +9,7 @@
 		}
 	],
 	"require": {
-		"mwstake/mediawiki-componentloader": "~1",
-		"aws/aws-sdk-php": "^3.67"
+		"mwstake/mediawiki-componentloader": "~1"
 	},
 	"require-dev": {
 		"mediawiki/mediawiki-codesniffer": "45.0.0",
@@ -39,7 +38,10 @@
 			"phpcbf"
 		],
 		"phan": "phan -d . --long-progress-bar",
-		"phpcs": "phpcs -sp --cache"
+		"phpcs": "phpcs -sp --cache",
+		"phpunit": [
+			"../../../tests/phpunit/phpunit.php -c .phpunit.xml"
+		]
 	},
 	"config": {
 		"allow-plugins": {

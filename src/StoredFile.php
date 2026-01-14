@@ -7,6 +7,8 @@ use FSFile;
 class StoredFile {
 
 	/**
+	 * We are storing original FSFile, as we need to keep reference to is, otherwise it will be removed
+	 *
 	 * @param FSFile $file
 	 * @param string $fileBackend
 	 * @param string $name

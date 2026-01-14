@@ -47,7 +47,8 @@ $GLOBALS['mwsgFileStorageUseS3'] = true;
 ### FARM no-S3 backend
 ```php
 // Configure this to the root directory holding instances
-$GLOBALS['mwsgFileStorageGlobalRepoDir'] = '/path/to/instances_root'
+$GLOBALS['mwsgFileStorageInstancesDir'] = '/path/to/instances_root'
+$GLOBALS['mwsgFileStorageArchiveDir'] = '/path/to/instances_root'
 ```
 
 ### Using custom backend (optional)
@@ -58,6 +59,8 @@ $GLOBALS['mwsgFileStorageBackend'] = 'backend-name';
 ### Temp backend (optional)
 In addition to main, persistent backend, a temporary backend can be used for transient files. This backend
 saves files to a temp directory within container. Default: `wgTmpDirectory`
+
+Note: Temp backend is shared between instances (in a farm setup), so no per-instance sub-dir.
 
 ```php
 $GLOBALS['mwsgFileStorageLocalTempDir'] = '/path/to/temp/dir';
