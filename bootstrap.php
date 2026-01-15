@@ -7,7 +7,7 @@ if ( defined( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION' ) ) {
 	return;
 }
 
-define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.0' );
+define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.1' );
 
 MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 ->register( 'filestorageutilities', static function () {
@@ -37,10 +37,6 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 
 		$GLOBALS['mwsgFileStorageBackend'] = $GLOBALS['mwsgFileStorageBackend'] ?? 'AmazonS3';
 
-		if ( $GLOBALS['mwsgFileStorageInstancesDir'] ?? false ) {
-			$GLOBALS['mwsgFileStorageInstancesBackend'] = $GLOBALS['mwsgFileStorageBackend'];
-		}
-
 	} else {
 		$GLOBALS['wgFileBackends']['bluespice'] = [
 			'name' => 'bluespice-backend',
@@ -55,22 +51,6 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 			'directoryMode' => $GLOBALS[$dirModeVariable],
 		];
 		$GLOBALS['mwsgFileStorageBackend'] = 'bluespice-backend';
-
-		if ( $GLOBALS['mwsgFileStorageInstancesDir'] ?? false ) {
-			$GLOBALS['wgFileBackends']['_instances'] = [
-				'name' => '_instances',
-				'class' => FSFileBackend::class,
-				'lockManager' => 'fsLockManager',
-				'containerPaths' => [
-					'instances-public' => $GLOBALS['mwsgFileStorageInstancesDir'],
-					'archive-public' => $GLOBALS['mwsgFileStorageArchiveDir'] ??
-						$GLOBALS['mwsgFileStorageInstancesDir'] . '/archive',
-				],
-				'fileMode' => $info['fileMode'] ?? 0644,
-				'directoryMode' => $GLOBALS[$dirModeVariable],
-			];
-			$GLOBALS['mwsgFileStorageInstancesBackend'] = '_instances';
-		}
 	}
 
 	// Local repo for temp files
@@ -84,14 +64,4 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 		'fileMode' => $info['fileMode'] ?? 0644,
 		'directoryMode' => $GLOBALS[$dirModeVariable],
 	];
-
-	$GLOBALS['wgHooks']['SetupAfterCache'][] = static function () use ( $isS3, $dirModeVariable ) {
-		if ( $isS3 ) {
-			// Setup "global" repo for farm. Actual bucket root
-			$bucketName = $GLOBALS['wgAWSBucketName'];
-			$wikiId = \MediaWiki\WikiMap\WikiMap::getCurrentWikiId();
-			$GLOBALS['wgFileBackends']['s3']['containerPaths']["$wikiId-instances-public"] = $bucketName;
-			$GLOBALS['wgFileBackends']['s3']['containerPaths']["$wikiId-archive-public"] = "$bucketName/_archive";
-		}
-	};
 } );

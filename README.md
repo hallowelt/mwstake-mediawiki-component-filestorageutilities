@@ -4,7 +4,6 @@
 This component introduces different file backends to be used for persistent and temporary files:
 - Main backend - persistent - could be S3 if system is so configured - shared between containers
 - Temp backend - transient files - stored locally on disk (inside container in docker setup)
-- Instance backend - only in farming setup - used for top-level operations on instance directories
 
 ## Usage
 
@@ -56,34 +55,6 @@ $path = $service->getTempFilePath( 'mytempfile2.txt', 'Temp/Dir', $prepare ); //
 // Retrieving/deleting files is same as for persistent files
 ```
 
-### Instance handling (for use by farming management only)
-
-```php
-/** @var \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler $service */
-$service = \MediaWiki\MediaWikiServices::getInstance()
-    ->get( 'MWStake.StorageUtilities' );
-
-// Copy instance directory 
-$status = $service->newInstanceTransaction()
-    ->copyInstance( 'instance1', 'instance2' )
-    ->commit();
-
-// Delete instance directory
-$status = $service->newInstanceTransaction()
-    ->deleteInstanceDirectory( 'instance2' )
-    ->commit();
-    
-// Rename instance directory (move)
-$status = $service->newInstanceTransaction()
-    ->moveInstanceDirectory( 'instance1', 'instance_renamed' )
-    ->commit();
-
-// Store archive file
-$status = $service->newInstanceTransaction()
-    ->storeInstanceArchive( '/path/to/local/file', '/path/to/archive.tar.gz' )
-    ->commit();
-```
-
 ### Direct FileBackend usage
 In edge-cases where wrapper methods are not enough, you can use FileBackends directly
 
@@ -105,13 +76,6 @@ Settings are to be configured in pre-init!
 ### AWS S3 backend ( only set to true if AWS extension is configured )
 ```php
 $GLOBALS['mwsgFileStorageUseS3'] = true;
-```
-
-### FARM environment - no S3 - optional - default to values from `wgFarmConfig`
-```php
-// Configure this to the root directory holding instances
-$GLOBALS['mwsgFileStorageInstancesDir'] = '/path/to/instances_root'
-$GLOBALS['mwsgFileStorageArchiveDir'] = '/path/to/instances_root'
 ```
 
 ### Using custom backend (optional)

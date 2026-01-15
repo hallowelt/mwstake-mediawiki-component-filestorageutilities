@@ -13,14 +13,12 @@ class StorageHandler {
 	public const BACKEND_TYPE_INSTANCE = 'instance';
 
 	/**
-	 * @param FileBackend $fileBackend
-	 * @param FileBackend $tempBackend
-	 * @param FileBackend|null $instanceBackend
+	 * @param \FileBackendGroup $fileBackendGroup
+	 * @param string $backendName
 	 */
 	public function __construct(
-		private readonly FileBackend $fileBackend,
-		private readonly FileBackend $tempBackend,
-		private readonly ?FileBackend $instanceBackend = null
+		private readonly \FileBackendGroup $fileBackendGroup,
+		private readonly string $backendName
 	) {
 	}
 
@@ -32,7 +30,7 @@ class StorageHandler {
 	 * @return TempFSFile|null
 	 */
 	public function getTempFile( string $filename, string $path = '' ): ?StoredFile {
-		return $this->doGetStoredFile( $this->tempBackend, $filename, $path );
+		return $this->doGetStoredFile( $this->getTempBackend(), $filename, $path );
 	}
 
 	/**
@@ -44,7 +42,7 @@ class StorageHandler {
 	 * @return string
 	 */
 	public function getTempFilePath( string $filename, string $path = '', bool $prepareDir = true ): string {
-		return $this->tempBackend->getTempFilePath( $filename, $path, $prepareDir );
+		return $this->getTempBackend()->getTempFilePath( $filename, $path, $prepareDir );
 	}
 
 	/**
@@ -54,7 +52,7 @@ class StorageHandler {
 	 * @return TempFSFile|null
 	 */
 	public function getFile( string $filename, string $path = '', ?FileBackend $backend = null ): ?StoredFile {
-		$backend = $backend ?? $this->fileBackend;
+		$backend = $backend ?? $this->getMainBackend();
 		return $this->doGetStoredFile( $backend, $filename, $path );
 	}
 
@@ -63,7 +61,7 @@ class StorageHandler {
 	 * @return StorageTransaction
 	 */
 	public function newTransaction( bool $useTempBackend = false ): StorageTransaction {
-		return new StorageTransaction( $useTempBackend ? $this->tempBackend : $this->fileBackend );
+		return new StorageTransaction( $useTempBackend ? $this->getTempBackend() : $this->getMainBackend() );
 	}
 
 	/**
@@ -74,31 +72,25 @@ class StorageHandler {
 	}
 
 	/**
-	 * @return InstanceTransaction
+	 * @return FileBackend
 	 */
-	public function newInstanceTransaction(): InstanceTransaction {
-		if ( !$this->instanceBackend ) {
-			throw new \RuntimeException( 'Global backend not configured' );
-		}
-		return new InstanceTransaction( $this->instanceBackend );
+	public function getMainBackend(): FileBackend {
+		return $this->getBackend( $this->backendName );
 	}
 
 	/**
-	 * @param string $type 'main':default|'temp'
+	 * @return TempFSFileBackend
+	 */
+	public function getTempBackend(): TempFSFileBackend {
+		return $this->getBackend( 'bluespice-local-backend' );
+	}
+
+	/**
+	 * @param string $name
 	 * @return FileBackend
 	 */
-	public function getBackend( string $type = 'main' ): FileBackend {
-		switch ( $type ) {
-			case 'temp':
-				return $this->tempBackend;
-			case 'instance':
-				if ( !$this->instanceBackend ) {
-					throw new \RuntimeException( 'Global backend not configured' );
-				}
-				return $this->instanceBackend;
-			default:
-				return $this->fileBackend;
-		}
+	public function getBackend( string $name ): FileBackend {
+		return $this->fileBackendGroup->get( $name );
 	}
 
 	/**

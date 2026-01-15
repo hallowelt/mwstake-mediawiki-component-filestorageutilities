@@ -30,31 +30,4 @@ class StorageHelper {
 		}
 		return "mwstore://$backendName/bluespice/$path/$filename";
 	}
-
-	/**
-	 * @param string $root
-	 * @param string $file
-	 * @return string
-	 */
-	public function makeInstancePath( string $root, string $file = '' ): string {
-		$backendName = $this->fileBackend->getName();
-		$root = trim( $root, '/' );
-		if ( !$file ) {
-			return "mwstore://$backendName/instances-public/$root";
-		}
-		return "mwstore://$backendName/instances-public/$root/" . trim( $file, '/' );
-	}
-
-	/**
-	 * @param string $file
-	 * @return string
-	 */
-	public function makeArchiveInstancePath( string $file ): string {
-		$backendName = $this->fileBackend->getName();
-		$file = trim( $file, '/' );
-		if ( !$file ) {
-			return "mwstore://$backendName/archive-public";
-		}
-		return "mwstore://$backendName/archive-public/$file";
-	}
 }
