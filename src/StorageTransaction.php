@@ -28,6 +28,31 @@ class StorageTransaction extends TransactionBase {
 		return $this;
 	}
 
+	/**
+	 * @param string $sourcePath
+	 * @param string $filename
+	 * @param string $path
+	 * @param array $opts
+	 * @return $this
+	 */
+	public function store( string $sourcePath, string $filename, string $path, array $opts = [] ) {
+		$this->operations[] = array_merge( [
+			'op' => 'store',
+			'src' => $sourcePath,
+			'dst' => $this->storageHelper->compileZonePath( $path, $filename ),
+		], $opts );
+
+		return $this;
+	}
+
+	/**
+	 * @param string $srcFilename
+	 * @param string $srcPath
+	 * @param string $dstFilename
+	 * @param string $dstPath
+	 * @param array $opts
+	 * @return $this
+	 */
 	public function copy(
 		string $srcFilename, string $srcPath, string $dstFilename, string $dstPath, array $opts = []
 	) {
@@ -41,6 +66,14 @@ class StorageTransaction extends TransactionBase {
 		return $this;
 	}
 
+	/**
+	 * @param string $srcFilename
+	 * @param string $srcPath
+	 * @param string $dstFilename
+	 * @param string $dstPath
+	 * @param array $opts
+	 * @return $this
+	 */
 	public function move(
 		string $srcFilename, string $srcPath, string $dstFilename, string $dstPath, array $opts = []
 	) {
@@ -53,7 +86,6 @@ class StorageTransaction extends TransactionBase {
 
 		return $this;
 	}
-
 
 	/**
 	 * @param string $filename

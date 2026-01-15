@@ -22,7 +22,6 @@ class StorageHandlerTest extends TestCase {
 	 * @dataProvider provideHandlers
 	 */
 	public function testNewTransaction( StorageHandler $handler, bool $hasInstance ) {
-
 		// Retrieve main backend
 		$this->assertInstanceOf( FileBackend::class, $handler->getBackend() );
 		$this->assertNotInstanceOf( TempFSFileBackend::class, $handler->getBackend() );
@@ -62,7 +61,6 @@ class StorageHandlerTest extends TestCase {
 		$mainBackend = $this->createMock( FSFileBackend::class );
 		$tempBackend = $this->createMock( TempFSFileBackend::class );
 		$instanceBackend = $this->createMock( FileBackend::class );
-
 
 		return [
 			'no-instance' => [

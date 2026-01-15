@@ -34,6 +34,20 @@ abstract class TransactionBase {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getOperations(): array {
+		return $this->operations;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getOptions() {
+		return $this->options;
+	}
+
+	/**
 	 * @return StatusValue
 	 */
 	public function commit(): StatusValue {
@@ -73,6 +87,10 @@ abstract class TransactionBase {
 		return $status;
 	}
 
+	/**
+	 * @param string $location
+	 * @return void
+	 */
 	protected function addClean( string $location ) {
 		$this->operations[] = [
 			'op' => 'clean',

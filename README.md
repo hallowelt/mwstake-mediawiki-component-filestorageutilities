@@ -1,50 +1,113 @@
 # MediaWiki Stakeholders Group - Components
 # File Storage Utilities Component
 
+This component introduces different file backends to be used for persistent and temporary files:
+- Main backend - persistent - could be S3 if system is so configured - shared between containers
+- Temp backend - transient files - stored locally on disk (inside container in docker setup)
+- Instance backend - only in farming setup - used for top-level operations on instance directories
+
 ## Usage
 
-```php
+This component relies on MediaWiki's FileBackend implementation and following methods are just convenience
+methods wrapping around those.
 
+### Shared - persistent files
+
+```php
+/** @var \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler $service */
+$service = \MediaWiki\MediaWikiServices::getInstance()
+    ->get( 'MWStake.StorageUtilities' );    
+
+// Create file
+$status = $service->newTransaction()
+    ->create( 'myfile.txt', 'File content', 'My/Sub/Directory', [ 'overwrite' => true ] )
+    ->commit();
+
+// Retrieve file
+$file = $service->getFile( 'myfile.txt', 'My/Sub/Directory' );
+$file->getFilename(); // 'myfile.txt'
+$file->getDirectory(); // 'My/Sub/Directory'
+$file->getPath(); // Local copy => '/tmp/{hash}.txt'
+$content = file_get_contents( $file->getPath() ); // 'File content'
+
+// Delete file
+$status = $service->newTransaction()
+    ->delete( 'myfile.txt', 'My/Sub/Directory' )
+    ->deleteDirectory( 'My/Sub/Directory' )
+    ->commit();
+```
+
+### Temporary files
+
+```php
 /** @var \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler $service */
 $service = \MediaWiki\MediaWikiServices::getInstance()
     ->get( 'MWStake.StorageUtilities' );
 
-$status = $service->newTransaction()
-    ->create( 'testfile.txt', 'Content', 'SubZone/ABC', ['overwrite' => true ] )
-    ->create( 'testfile2.txt', 'Content', 'SubZone/ABC', ['overwrite' => true ] )
+// Create temp file
+$status = $service->newTempTransaction()
+    ->create( 'mytempfile.txt', 'Temp file content', 'Temp/Dir' )
+    ->commit();
+       
+// Get path of the temp file without creating it - useful for passing to objects that will write to that path
+$prepare = true; // default: true to create any missing directories in path, false to just return the path
+$path = $service->getTempFilePath( 'mytempfile2.txt', 'Temp/Dir', $prepare ); // configured/temp/dir/Temp/Dir/mytempfile2.txt    
+
+// Retrieving/deleting files is same as for persistent files
+```
+
+### Instance handling (for use by farming management only)
+
+```php
+/** @var \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler $service */
+$service = \MediaWiki\MediaWikiServices::getInstance()
+    ->get( 'MWStake.StorageUtilities' );
+
+// Copy instance directory 
+$status = $service->newInstanceTransaction()
+    ->copyInstance( 'instance1', 'instance2' )
     ->commit();
 
-if ( !$status->isOK() ) {
-    die( "FATAL: FileStorageUtilities could not create test file!" );
-}
-
-$file = $service->getFile( 'testfile.txt', 'SubZone/ABC' );
-if ( !$file ) {
-    die( "FATAL: FileStorageUtilities test file is missing or has wrong size!" );
-}
-
-$status = $service->newTransaction()
-    ->delete( 'testfile.txt', 'SubZone/ABC' )
+// Delete instance directory
+$status = $service->newInstanceTransaction()
+    ->deleteInstanceDirectory( 'instance2' )
+    ->commit();
+    
+// Rename instance directory (move)
+$status = $service->newInstanceTransaction()
+    ->moveInstanceDirectory( 'instance1', 'instance_renamed' )
     ->commit();
 
-if ( !$status->isOK() ) {
-    die( "FATAL: FileStorageUtilities could not delete test file!" );
-}
-
-$service->newTransaction( useTempBackend: true )
-    ->create( 'temp.txt', 'This is a temp file.', 'Test' )
+// Store archive file
+$status = $service->newInstanceTransaction()
+    ->storeInstanceArchive( '/path/to/local/file', '/path/to/archive.tar.gz' )
     ->commit();
 ```
 
-## Configuration
+### Direct FileBackend usage
+In edge-cases where wrapper methods are not enough, you can use FileBackends directly
 
-### AWS S3 backend ( AWS extension configured )
 ```php
-// Before component is initialized (in pre-init)
+/** @var \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler $service */
+$service = \MediaWiki\MediaWikiServices::getInstance()
+    ->get( 'MWStake.StorageUtilities' );
+
+$type = 'main' // Shared
+$type = 'temp' // Temp
+$type = 'instance' // Instance
+
+$backend = $service->getBackend( $type );
+````
+
+## Configuration
+Settings are to be configured in pre-init!
+
+### AWS S3 backend ( only set to true if AWS extension is configured )
+```php
 $GLOBALS['mwsgFileStorageUseS3'] = true;
 ```
 
-### FARM no-S3 backend
+### FARM environment - no S3 - optional - default to values from `wgFarmConfig`
 ```php
 // Configure this to the root directory holding instances
 $GLOBALS['mwsgFileStorageInstancesDir'] = '/path/to/instances_root'

@@ -18,7 +18,7 @@ class InstanceTransaction extends TransactionBase {
 		$fl = $this->fileBackend->getFileList( [
 			'dir' => $this->storageHelper->makeInstancePath( $src ), 'topOnly' => false
 		] );
-		foreach ( $fl as $fileLocation  ) {
+		foreach ( $fl as $fileLocation ) {
 			$bits = explode( '/', $fileLocation );
 			$filename = array_pop( $bits );
 			if ( in_array( $filename, $exclude ) ) {

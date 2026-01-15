@@ -17,7 +17,9 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 	if ( isset( $GLOBALS['wgWikiFarmConfigInternal' ] ) ) {
 		// Set from wiki farm config if not set
 		$GLOBALS['mwsgFileStorageInstancesDir'] =
-			$GLOBALS['mwsgFileStorageInstancesDir'] ?? $GLOBALS['wgWikiFarmConfigInternal' ]->get( 'instanceDirectory' );
+			$GLOBALS['mwsgFileStorageInstancesDir'] ??
+			$GLOBALS['wgWikiFarmConfigInternal' ]->get( 'instanceDirectory' );
+
 		$GLOBALS['mwsgFileStorageArchiveDir'] =
 			$GLOBALS['mwsgFileStorageArchiveDir'] ?? $GLOBALS['wgWikiFarmConfigInternal' ]->get( 'archiveDirectory' );
 	}
@@ -26,7 +28,7 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 	$isS3 = $GLOBALS['mwsgFileStorageUseS3'] ?? false;
 	$dirModeVariable = "wg" . MainConfigNames::DirectoryMode;
 
-	if ( $isS3 && !defined( 'MW_PHPUNIT_TEST' ) ) {
+	if ( $isS3 ) {
 		$GLOBALS['wgAWSRepoZones']['bluespice'] = [
 			'container' => 'bluespice',
 			'path' => '/bluespice',
@@ -45,12 +47,14 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 			'class' => FSFileBackend::class,
 			'lockManager' => 'fsLockManager',
 			'containerPaths' => [
-				'bluespice' => defined( 'BS_DATA_DIR' ) ? BS_DATA_DIR  : $GLOBALS['wgUploadDirectory'] . '/bluespice'
+				'bluespice' => defined( 'BS_DATA_DIR' ) ?
+					BS_DATA_DIR :
+					$GLOBALS['wgUploadDirectory'] . '/bluespice'
 			],
 			'fileMode' => $info['fileMode'] ?? 0644,
 			'directoryMode' => $GLOBALS[$dirModeVariable],
 		];
-		$GLOBALS['mwsgFileStorageBackend'] = 'bluespice-backend';;
+		$GLOBALS['mwsgFileStorageBackend'] = 'bluespice-backend';
 
 		if ( $GLOBALS['mwsgFileStorageInstancesDir'] ?? false ) {
 			$GLOBALS['wgFileBackends']['_instances'] = [
@@ -59,7 +63,8 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 				'lockManager' => 'fsLockManager',
 				'containerPaths' => [
 					'instances-public' => $GLOBALS['mwsgFileStorageInstancesDir'],
-					'archive-public' => $GLOBALS['mwsgFileStorageArchiveDir'] ?? $GLOBALS['mwsgFileStorageInstancesDir'] . '/archive',
+					'archive-public' => $GLOBALS['mwsgFileStorageArchiveDir'] ??
+						$GLOBALS['mwsgFileStorageInstancesDir'] . '/archive',
 				],
 				'fileMode' => $info['fileMode'] ?? 0644,
 				'directoryMode' => $GLOBALS[$dirModeVariable],
@@ -80,18 +85,13 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 		'directoryMode' => $GLOBALS[$dirModeVariable],
 	];
 
-	$GLOBALS['wgHooks']['SetupAfterCache'][] = static function() use ( $isS3, $dirModeVariable ) {
-		if ( $isS3 && !defined( 'MW_PHPUNIT_TEST' ) ) {
+	$GLOBALS['wgHooks']['SetupAfterCache'][] = static function () use ( $isS3, $dirModeVariable ) {
+		if ( $isS3 ) {
 			// Setup "global" repo for farm. Actual bucket root
 			$bucketName = $GLOBALS['wgAWSBucketName'];
 			$wikiId = \MediaWiki\WikiMap\WikiMap::getCurrentWikiId();
 			$GLOBALS['wgFileBackends']['s3']['containerPaths']["$wikiId-instances-public"] = $bucketName;
 			$GLOBALS['wgFileBackends']['s3']['containerPaths']["$wikiId-archive-public"] = "$bucketName/_archive";
 		}
-
-		/** @var \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler $service */
-		$service = \MediaWiki\MediaWikiServices::getInstance()
-			->get( 'MWStake.StorageUtilities' );
-
 	};
 } );

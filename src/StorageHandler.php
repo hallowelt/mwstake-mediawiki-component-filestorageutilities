@@ -3,7 +3,6 @@
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
 use FSFile;
-use Traversable;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
 
