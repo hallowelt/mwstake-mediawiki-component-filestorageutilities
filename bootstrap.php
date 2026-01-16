@@ -7,22 +7,13 @@ if ( defined( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION' ) ) {
 	return;
 }
 
-define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.1' );
+define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.2' );
 
 MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 ->register( 'filestorageutilities', static function () {
 	$GLOBALS['wgServiceWiringFiles'][] = __DIR__ . '/includes/ServiceWiring.php';
 
 	$GLOBALS['wgFileBackends'] = $GLOBALS['wgFileBackends'] ?? [];
-	if ( isset( $GLOBALS['wgWikiFarmConfigInternal' ] ) ) {
-		// Set from wiki farm config if not set
-		$GLOBALS['mwsgFileStorageInstancesDir'] =
-			$GLOBALS['mwsgFileStorageInstancesDir'] ??
-			$GLOBALS['wgWikiFarmConfigInternal' ]->get( 'instanceDirectory' );
-
-		$GLOBALS['mwsgFileStorageArchiveDir'] =
-			$GLOBALS['mwsgFileStorageArchiveDir'] ?? $GLOBALS['wgWikiFarmConfigInternal' ]->get( 'archiveDirectory' );
-	}
 	$GLOBALS['mwsgFileStorageBackend'] = null;
 
 	$isS3 = $GLOBALS['mwsgFileStorageUseS3'] ?? false;
