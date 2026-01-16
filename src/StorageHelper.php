@@ -22,12 +22,12 @@ class StorageHelper {
 		$path = trim( $path, '/' );
 		$backendName = $this->fileBackend->getName();
 		if ( $path === '' && $filename === '' ) {
-			return "mwstore://$backendName/bluespice";
+			return "mwstore://$backendName/wiki_data";
 		} elseif ( $path === '' ) {
-			return "mwstore://$backendName/bluespice/$filename";
+			return "mwstore://$backendName/wiki_data/$filename";
 		} elseif ( $filename === '' ) {
-			return "mwstore://$backendName/bluespice/$path";
+			return "mwstore://$backendName/wiki_data/$path";
 		}
-		return "mwstore://$backendName/bluespice/$path/$filename";
+		return "mwstore://$backendName/wiki_data/$path/$filename";
 	}
 }

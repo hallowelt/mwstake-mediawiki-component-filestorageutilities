@@ -27,65 +27,15 @@ class StorageHelperTest extends TestCase {
 	}
 
 	/**
-	 * @param string $instance
-	 * @param string $file
-	 * @param string $expected
-	 * @return void
-	 * @covers \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHelper::makeInstancePath
-	 * @dataProvider provideInstanceZoneData
-	 */
-	public function testInstancePaths( string $instance, string $file, string $expected ) {
-		$backend = new FSFileBackend( [ 'name' => 'instance-backend', 'domainId' => 'test' ] );
-		$helper = new StorageHelper( $backend );
-
-		$this->assertSame( $expected, $helper->makeInstancePath( $instance, $file ) );
-	}
-
-	/**
-	 * @param string $instance
-	 * @param string $expected
-	 * @return void
-	 * @covers \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHelper::makeArchiveInstancePath
-	 * @dataProvider provideInstanceArchiveZoneData
-	 */
-	public function testInstanceArchivePaths( string $instance, string $expected ) {
-		$backend = new FSFileBackend( [ 'name' => 'archive-backend', 'domainId' => 'test' ] );
-		$helper = new StorageHelper( $backend );
-
-		$this->assertSame( $expected, $helper->makeArchiveInstancePath( $instance ) );
-	}
-
-	/**
 	 * @return array[]
 	 */
 	protected function provideZoneData() {
 		return [
-			[ '', '', 'mwstore://main-backend/bluespice' ],
-			[ 'file.txt', '', 'mwstore://main-backend/bluespice/file.txt' ],
-			[ '', 'path/to/dir', 'mwstore://main-backend/bluespice/path/to/dir' ],
-			[ 'file.txt', 'path/to/dir', 'mwstore://main-backend/bluespice/path/to/dir/file.txt' ],
-			[ '/file.txt', '/path/to/dir/', 'mwstore://main-backend/bluespice/path/to/dir/file.txt' ],
-		];
-	}
-
-	/**
-	 * @return array[]
-	 */
-	protected function provideInstanceZoneData() {
-		return [
-			[ 'instance1', '', 'mwstore://instance-backend/instances-public/instance1' ],
-			[ 'instance1', 'file.txt', 'mwstore://instance-backend/instances-public/instance1/file.txt' ],
-			[ '/instance1/', '/file.txt', 'mwstore://instance-backend/instances-public/instance1/file.txt' ],
-		];
-	}
-
-	/**
-	 * @return array[]
-	 */
-	protected function provideInstanceArchiveZoneData() {
-		return [
-			[ 'archive1', 'mwstore://archive-backend/archive-public/archive1' ],
-			[ '/archive1/', 'mwstore://archive-backend/archive-public/archive1' ],
+			[ '', '', 'mwstore://main-backend/wiki_data' ],
+			[ 'file.txt', '', 'mwstore://main-backend/wiki_data/file.txt' ],
+			[ '', 'path/to/dir', 'mwstore://main-backend/wiki_data/path/to/dir' ],
+			[ 'file.txt', 'path/to/dir', 'mwstore://main-backend/wiki_data/path/to/dir/file.txt' ],
+			[ '/file.txt', '/path/to/dir/', 'mwstore://main-backend/wiki_data/path/to/dir/file.txt' ],
 		];
 	}
 }

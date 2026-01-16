@@ -8,10 +8,6 @@ use Wikimedia\FileBackend\FSFile\TempFSFile;
 
 class StorageHandler {
 
-	public const BACKEND_TYPE_MAIN = 'main';
-	public const BACKEND_TYPE_TEMP = 'temp';
-	public const BACKEND_TYPE_INSTANCE = 'instance';
-
 	/**
 	 * @param \FileBackendGroup $fileBackendGroup
 	 * @param string $backendName
@@ -82,7 +78,7 @@ class StorageHandler {
 	 * @return TempFSFileBackend
 	 */
 	public function getTempBackend(): TempFSFileBackend {
-		return $this->getBackend( 'bluespice-local-backend' );
+		return $this->getBackend( 'data-local-backend' );
 	}
 
 	/**

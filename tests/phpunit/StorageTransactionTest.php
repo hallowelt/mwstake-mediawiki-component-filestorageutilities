@@ -37,53 +37,53 @@ class StorageTransactionTest extends TestCase {
 			// Creating - has path, so it needs to prepare
 			[
 				'op' => 'prepare',
-				'dir' => 'mwstore://main-backend/bluespice/dummy/path',
+				'dir' => 'mwstore://main-backend/wiki_data/dummy/path',
 			],
 			[
 				'op' => 'create',
-				'dst' => 'mwstore://main-backend/bluespice/dummy/path/example.txt',
+				'dst' => 'mwstore://main-backend/wiki_data/dummy/path/example.txt',
 				'content' => 'This is a test file.',
 			],
 			// Creating - no path, so just create
 			[
 				'op' => 'create',
-				'dst' => 'mwstore://main-backend/bluespice/another.txt',
+				'dst' => 'mwstore://main-backend/wiki_data/another.txt',
 				'content' => 'Another test file.',
 			],
 			// Storing
 			[
 				'op' => 'store',
 				'src' => '/local/path/file.txt',
-				'dst' => 'mwstore://main-backend/bluespice/store/path/file.txt',
+				'dst' => 'mwstore://main-backend/wiki_data/store/path/file.txt',
 			],
 			// Moving
 			[
 				'op' => 'prepare',
-				'dir' => 'mwstore://main-backend/bluespice/new/path',
+				'dir' => 'mwstore://main-backend/wiki_data/new/path',
 			],
 			[
 				'op' => 'move',
-				'src' => 'mwstore://main-backend/bluespice/old/path/oldname.txt',
-				'dst' => 'mwstore://main-backend/bluespice/new/path/newname.txt',
+				'src' => 'mwstore://main-backend/wiki_data/old/path/oldname.txt',
+				'dst' => 'mwstore://main-backend/wiki_data/new/path/newname.txt',
 			],
 			// Copying
 			[
 				'op' => 'prepare',
-				'dir' => 'mwstore://main-backend/bluespice/copy/to',
+				'dir' => 'mwstore://main-backend/wiki_data/copy/to',
 			],
 			[
 				'op' => 'copy',
-				'src' => 'mwstore://main-backend/bluespice/copy/from/copyme.txt',
-				'dst' => 'mwstore://main-backend/bluespice/copy/to/copied.txt',
+				'src' => 'mwstore://main-backend/wiki_data/copy/from/copyme.txt',
+				'dst' => 'mwstore://main-backend/wiki_data/copy/to/copied.txt',
 			],
 			// Deleting - with and without path
 			[
 				'op' => 'delete',
-				'src' => 'mwstore://main-backend/bluespice/delete/path/tobedeleted.txt',
+				'src' => 'mwstore://main-backend/wiki_data/delete/path/tobedeleted.txt',
 			],
 			[
 				'op' => 'delete',
-				'src' => 'mwstore://main-backend/bluespice/anotherdelete.txt',
+				'src' => 'mwstore://main-backend/wiki_data/anotherdelete.txt',
 			]
 		], $transaction->getOperations() );
 	}

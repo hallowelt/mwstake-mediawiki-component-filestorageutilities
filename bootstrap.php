@@ -7,7 +7,7 @@ if ( defined( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION' ) ) {
 	return;
 }
 
-define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.2' );
+define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.3' );
 
 MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 ->register( 'filestorageutilities', static function () {
@@ -20,8 +20,8 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 	$dirModeVariable = "wg" . MainConfigNames::DirectoryMode;
 
 	if ( $isS3 ) {
-		$GLOBALS['wgAWSRepoZones']['bluespice'] = [
-			'container' => 'bluespice',
+		$GLOBALS['wgAWSRepoZones']['wiki_data'] = [
+			'container' => 'wiki_data',
 			'path' => '/bluespice',
 			'isPublic' => false,
 		];
@@ -29,28 +29,28 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 		$GLOBALS['mwsgFileStorageBackend'] = $GLOBALS['mwsgFileStorageBackend'] ?? 'AmazonS3';
 
 	} else {
-		$GLOBALS['wgFileBackends']['bluespice'] = [
-			'name' => 'bluespice-backend',
+		$GLOBALS['wgFileBackends']['_data'] = [
+			'name' => 'data-backend',
 			'class' => FSFileBackend::class,
 			'lockManager' => 'fsLockManager',
 			'containerPaths' => [
-				'bluespice' => defined( 'BS_DATA_DIR' ) ?
+				'wiki_data' => defined( 'BS_DATA_DIR' ) ?
 					BS_DATA_DIR :
 					$GLOBALS['wgUploadDirectory'] . '/bluespice'
 			],
 			'fileMode' => $info['fileMode'] ?? 0644,
 			'directoryMode' => $GLOBALS[$dirModeVariable],
 		];
-		$GLOBALS['mwsgFileStorageBackend'] = 'bluespice-backend';
+		$GLOBALS['mwsgFileStorageBackend'] = 'data-backend';
 	}
 
 	// Local repo for temp files
-	$GLOBALS['wgFileBackends']['bluespice-local'] = [
-		'name' => 'bluespice-local-backend',
+	$GLOBALS['wgFileBackends']['data-local'] = [
+		'name' => 'data-local-backend',
 		'class' => \MWStake\MediaWiki\Component\FileStorageUtilities\TempFSFileBackend::class,
 		'lockManager' => 'fsLockManager',
 		'containerPaths' => [
-			'bluespice' => $GLOBALS['mwsgFileStorageLocalTempDir'] ?? $GLOBALS['wgTmpDirectory'] . '/bluespice',
+			'wiki_data' => $GLOBALS['mwsgFileStorageLocalTempDir'] ?? $GLOBALS['wgTmpDirectory'] . '/wiki_temp_data',
 		],
 		'fileMode' => $info['fileMode'] ?? 0644,
 		'directoryMode' => $GLOBALS[$dirModeVariable],
