@@ -7,7 +7,7 @@ if ( defined( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION' ) ) {
 	return;
 }
 
-define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.3' );
+define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.4' );
 
 MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 ->register( 'filestorageutilities', static function () {
@@ -15,6 +15,10 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 
 	$GLOBALS['wgFileBackends'] = $GLOBALS['wgFileBackends'] ?? [];
 	$GLOBALS['mwsgFileStorageBackend'] = null;
+	$GLOBALS['mwsgFileStorageDataDirectory'] = $GLOBALS['mwsgFileStorageDataDirectory'] ?? null;
+	if ( $GLOBALS['mwsgFileStorageDataDirectory'] === null ) {
+		throw new RuntimeException( 'mwsgFileStorageDataDirectory global must be set to use FileStorageUtilities' );
+	}
 
 	$isS3 = $GLOBALS['mwsgFileStorageUseS3'] ?? false;
 	$dirModeVariable = "wg" . MainConfigNames::DirectoryMode;
@@ -22,7 +26,7 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 	if ( $isS3 ) {
 		$GLOBALS['wgAWSRepoZones']['wiki_data'] = [
 			'container' => 'wiki_data',
-			'path' => '/bluespice',
+			'path' => '/' . ltrim( $GLOBALS['mwsgFileStorageDataDirectory'], '/' ),
 			'isPublic' => false,
 		];
 
@@ -36,7 +40,7 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 			'containerPaths' => [
 				'wiki_data' => defined( 'BS_DATA_DIR' ) ?
 					BS_DATA_DIR :
-					$GLOBALS['wgUploadDirectory'] . '/bluespice'
+					$GLOBALS['wgUploadDirectory'] . '/' . ltrim( $GLOBALS['mwsgFileStorageDataDirectory'], '/' ),
 			],
 			'fileMode' => $info['fileMode'] ?? 0644,
 			'directoryMode' => $GLOBALS[$dirModeVariable],

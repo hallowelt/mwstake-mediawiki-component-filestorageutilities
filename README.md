@@ -73,6 +73,13 @@ $backend = $service->getBackend( $type );
 ## Configuration
 Settings are to be configured in pre-init!
 
+### Storage directory - mandatory
+This is the directory where all the custom files will be stored (and it sub-directories of it)
+
+```php
+$GLOBALS['mwsgFileStorageDataDirectory'] = 'my-dir'
+```
+
 ### AWS S3 backend ( only set to true if AWS extension is configured )
 ```php
 $GLOBALS['mwsgFileStorageUseS3'] = true;
