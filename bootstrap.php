@@ -15,10 +15,7 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 
 	$GLOBALS['wgFileBackends'] = $GLOBALS['wgFileBackends'] ?? [];
 	$GLOBALS['mwsgFileStorageBackend'] = null;
-	$GLOBALS['mwsgFileStorageDataDirectory'] = $GLOBALS['mwsgFileStorageDataDirectory'] ?? null;
-	if ( $GLOBALS['mwsgFileStorageDataDirectory'] === null ) {
-		throw new RuntimeException( 'mwsgFileStorageDataDirectory global must be set to use FileStorageUtilities' );
-	}
+	$GLOBALS['mwsgFileStorageDataDirectory'] = $GLOBALS['mwsgFileStorageDataDirectory'] ?? 'data';
 
 	$isS3 = $GLOBALS['mwsgFileStorageUseS3'] ?? false;
 	$dirModeVariable = "wg" . MainConfigNames::DirectoryMode;
