@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+
+  php:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          tools: composer:2
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer update
+
+      - name: Run tests
+        run: composer test
+
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          tools: composer:2
+
+      - name: Clone MediaWiki
+        run: git clone --depth 1 -b REL1_43 https://gerrit.wikimedia.org/r/mediawiki/core.git .
+
+      - name: Checkout component
+        uses: actions/checkout@v4
+        with:
+          path: _component
+
+      - name: Install dependencies
+        run: composer update
+
+      - name: Composer require
+        run: |
+          REPO="${{ github.event.repository.name }}"
+          PACKAGE="${REPO#mwstake-}"
+          composer config repositories._component path "${{ github.workspace }}/_component"
+          composer require "mwstake/${PACKAGE}:*@dev"
+
+      - name: Create LocalSettings.php
+        run: echo '<?php $wgServer = "";' > LocalSettings.php
+
+      - name: Run tests
+        run: |
+          REPO="${{ github.event.repository.name }}"
+          PACKAGE="${REPO#mwstake-}"
+          composer phpunit:unit -- --colors=always "vendor/mwstake/${PACKAGE}/tests/phpunit/unit" --exclude-group Broken,ParserFuzz,Stub
