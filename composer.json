@@ -1,5 +1,6 @@
 {
 	"name": "mwstake/mediawiki-component-filestorageutilities",
+	"description": "Provides file storage utility functions for MediaWiki",
 	"license": "GPL-3.0-only",
 	"authors": [
 		{
