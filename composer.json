@@ -20,12 +20,16 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"MWStake\\MediaWiki\\Component\\FileStorageUtilities\\": "src/",
-			"MWStake\\MediaWiki\\Component\\FileStorageUtilities\\Tests\\": "tests/phpunit/"
+			"MWStake\\MediaWiki\\Component\\FileStorageUtilities\\": "src/"
 		},
 		"files": [
 			"bootstrap.php"
 		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"MWStake\\MediaWiki\\Component\\FileStorageUtilities\\Tests\\Unit\\": "tests/phpunit/unit/"
+		}
 	},
 	"scripts": {
 		"test": [

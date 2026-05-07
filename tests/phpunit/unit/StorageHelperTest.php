@@ -1,6 +1,6 @@
 <?php
 
-namespace MWStake\MediaWiki\Component\FileStorageUtilities\Tests;
+namespace MWStake\MediaWiki\Component\FileStorageUtilities\Tests\Unit;
 
 use MWStake\MediaWiki\Component\FileStorageUtilities\StorageHelper;
 use PHPUnit\Framework\TestCase;
