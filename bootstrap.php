@@ -7,7 +7,7 @@ if ( defined( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION' ) ) {
 	return;
 }
 
-define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.5' );
+define( 'MWSTAKE_MEDIAWIKI_COMPONENT_FILESTORAGEUTILITIES_VERSION', '1.0.6' );
 
 MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 ->register( 'filestorageutilities', static function () {
@@ -51,7 +51,7 @@ MWStake\MediaWiki\ComponentLoader\Bootstrapper::getInstance()
 		'class' => \MWStake\MediaWiki\Component\FileStorageUtilities\TempFSFileBackend::class,
 		'lockManager' => 'fsLockManager',
 		'containerPaths' => [
-			'wiki_data' => $GLOBALS['mwsgFileStorageLocalTempDir'] ?? $GLOBALS['wgTmpDirectory'] . '/wiki_temp_data',
+			'wiki_data' => $GLOBALS['mwsgFileStorageLocalTempDir'] ?? wfTempDir() . '/wiki_temp_data',
 		],
 		'fileMode' => $info['fileMode'] ?? 0644,
 		'directoryMode' => $GLOBALS[$dirModeVariable],
