@@ -21,7 +21,7 @@ class StorageTransaction extends TransactionBase {
 		$this->addPrepare( $path );
 		$this->operations[] = array_merge( [
 			'op' => 'create',
-			'dst' => $this->storageHelper->compileZonePath( $path, $filename ),
+			'dst' => $this->storageHelper->compileZonePath( $path, $filename, $this->container ),
 			'content' => $content,
 		], $opts );
 
@@ -39,7 +39,7 @@ class StorageTransaction extends TransactionBase {
 		$this->operations[] = array_merge( [
 			'op' => 'store',
 			'src' => $sourcePath,
-			'dst' => $this->storageHelper->compileZonePath( $path, $filename ),
+			'dst' => $this->storageHelper->compileZonePath( $path, $filename, $this->container ),
 		], $opts );
 
 		return $this;
@@ -59,8 +59,8 @@ class StorageTransaction extends TransactionBase {
 		$this->addPrepare( $dstPath );
 		$this->operations[] = array_merge( [
 			'op' => 'copy',
-			'src' => $this->storageHelper->compileZonePath( $srcPath, $srcFilename ),
-			'dst' => $this->storageHelper->compileZonePath( $dstPath, $dstFilename ),
+			'src' => $this->storageHelper->compileZonePath( $srcPath, $srcFilename, $this->container ),
+			'dst' => $this->storageHelper->compileZonePath( $dstPath, $dstFilename, $this->container ),
 		], $opts );
 
 		return $this;
@@ -80,8 +80,8 @@ class StorageTransaction extends TransactionBase {
 		$this->addPrepare( $dstPath );
 		$this->operations[] = array_merge( [
 			'op' => 'move',
-			'src' => $this->storageHelper->compileZonePath( $srcPath, $srcFilename ),
-			'dst' => $this->storageHelper->compileZonePath( $dstPath, $dstFilename ),
+			'src' => $this->storageHelper->compileZonePath( $srcPath, $srcFilename, $this->container ),
+			'dst' => $this->storageHelper->compileZonePath( $dstPath, $dstFilename, $this->container ),
 		], $opts );
 
 		return $this;
@@ -96,7 +96,7 @@ class StorageTransaction extends TransactionBase {
 	public function delete( string $filename, string $path, array $opts = [] ): StorageTransaction {
 		$this->operations[] = array_merge( [
 			'op' => 'delete',
-			'src' => $this->storageHelper->compileZonePath( $path, $filename ),
+			'src' => $this->storageHelper->compileZonePath( $path, $filename, $this->container ),
 		], $opts );
 
 		return $this;
@@ -109,13 +109,13 @@ class StorageTransaction extends TransactionBase {
 	 */
 	public function deleteDirectory( string $path, array $opts = [] ): StorageTransaction {
 		$list = $this->fileBackend->getFileList( [
-			'dir' => $this->storageHelper->compileZonePath( $path, '' ),
+			'dir' => $this->storageHelper->compileZonePath( $path, '', $this->container ),
 			'topOnly' => false
 		] );
 		foreach ( $list as $file ) {
 			$this->operations[] = array_merge( [
 				'op' => 'delete',
-				'src' => $this->storageHelper->compileZonePath( $path, $file )
+				'src' => $this->storageHelper->compileZonePath( $path, $file, $this->container )
 			], $opts );
 		}
 
@@ -141,7 +141,7 @@ class StorageTransaction extends TransactionBase {
 		if ( $dstPath ) {
 			$this->operations[] = [
 				'op' => 'prepare',
-				'dir' => $this->storageHelper->compileZonePath( $dstPath, '' ),
+				'dir' => $this->storageHelper->compileZonePath( $dstPath, '', $this->container ),
 			];
 		}
 	}
