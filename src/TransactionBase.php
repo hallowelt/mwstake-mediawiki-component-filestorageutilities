@@ -11,14 +11,26 @@ abstract class TransactionBase {
 	protected array $operations = [];
 	/** @var array */
 	protected array $options = [];
-
+	/** @var StorageHelper */
 	protected StorageHelper $storageHelper;
+	/** @var string */
+	protected string $container = 'wiki_data';
 
 	/**
 	 * @param FileBackend $fileBackend
 	 */
 	public function __construct( protected readonly FileBackend $fileBackend ) {
 		$this->storageHelper = new StorageHelper( $fileBackend );
+	}
+
+	/**
+	 * @param string $container
+	 * @return TransactionBase
+	 */
+	public function setContainer( string $container ): TransactionBase {
+		$this->container = $container;
+
+		return $this;
 	}
 
 	/**

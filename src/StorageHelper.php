@@ -15,19 +15,22 @@ class StorageHelper {
 	/**
 	 * @param string $path
 	 * @param string $filename
+	 * @param string $container
 	 * @return string
 	 */
-	public function compileZonePath( string $path = '', string $filename = '' ): string {
+	public function compileZonePath(
+		string $path = '', string $filename = '', string $container = 'wiki_data'
+	): string {
 		$filename = trim( $filename, '/' );
 		$path = trim( $path, '/' );
 		$backendName = $this->fileBackend->getName();
 		if ( $path === '' && $filename === '' ) {
-			return "mwstore://$backendName/wiki_data";
+			return "mwstore://$backendName/$container";
 		} elseif ( $path === '' ) {
-			return "mwstore://$backendName/wiki_data/$filename";
+			return "mwstore://$backendName/$container/$filename";
 		} elseif ( $filename === '' ) {
-			return "mwstore://$backendName/wiki_data/$path";
+			return "mwstore://$backendName/$container/$path";
 		}
-		return "mwstore://$backendName/wiki_data/$path/$filename";
+		return "mwstore://$backendName/$container/$path/$filename";
 	}
 }
