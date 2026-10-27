@@ -5,7 +5,22 @@ This component introduces different file backends to be used for persistent and 
 - Main backend - persistent - could be S3 if system is so configured - shared between containers
 - Temp backend - transient files - stored locally on disk (inside container in docker setup)
 
-## Usage
+**This code is meant to be executed within the MediaWiki application context. No standalone usage is intended.**
+
+## Compatibility
+- \>= `1.0.x` -> MediaWiki 1.43
+
+## Use in a MediaWiki extension
+
+Require this component in the `composer.json` of your extension:
+
+```json
+{
+	"require": {
+		"mwstake/mediawiki-component-filestorageutilities": "~1"
+	}
+}
+```
 
 This component relies on MediaWiki's FileBackend implementation and following methods are just convenience
 methods wrapping around those.
