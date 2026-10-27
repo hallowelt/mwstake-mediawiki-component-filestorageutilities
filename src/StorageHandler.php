@@ -2,6 +2,7 @@
 
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
+use MediaWiki\FileBackend\FileBackendGroup;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
@@ -9,11 +10,11 @@ use Wikimedia\FileBackend\FSFile\TempFSFile;
 class StorageHandler {
 
 	/**
-	 * @param \FileBackendGroup $fileBackendGroup
+	 * @param FileBackendGroup $fileBackendGroup
 	 * @param string $backendName
 	 */
 	public function __construct(
-		private readonly \FileBackendGroup $fileBackendGroup,
+		private readonly FileBackendGroup $fileBackendGroup,
 		private readonly string $backendName
 	) {
 	}
