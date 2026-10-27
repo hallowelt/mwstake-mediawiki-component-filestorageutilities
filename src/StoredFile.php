@@ -2,7 +2,7 @@
 
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
-use FSFile;
+use Wikimedia\FileBackend\FSFile\FSFile;
 
 class StoredFile {
 

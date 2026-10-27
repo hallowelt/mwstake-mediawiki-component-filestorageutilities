@@ -2,8 +2,8 @@
 
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
-use FSFile;
 use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFile\FSFile;
 use Wikimedia\FileBackend\FSFile\TempFSFile;
 
 class StorageHandler {
