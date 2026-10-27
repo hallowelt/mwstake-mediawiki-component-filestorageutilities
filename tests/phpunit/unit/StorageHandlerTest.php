@@ -2,7 +2,7 @@
 
 namespace MWStake\MediaWiki\Component\FileStorageUtilities\Tests\Unit;
 
-use FileBackendGroup;
+use MediaWiki\FileBackend\FileBackendGroup;
 use MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler;
 use MWStake\MediaWiki\Component\FileStorageUtilities\StorageTransaction;
 use MWStake\MediaWiki\Component\FileStorageUtilities\TempFSFileBackend;
