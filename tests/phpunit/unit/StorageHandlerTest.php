@@ -3,12 +3,12 @@
 namespace MWStake\MediaWiki\Component\FileStorageUtilities\Tests\Unit;
 
 use FileBackendGroup;
-use FSFileBackend;
 use MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler;
 use MWStake\MediaWiki\Component\FileStorageUtilities\StorageTransaction;
 use MWStake\MediaWiki\Component\FileStorageUtilities\TempFSFileBackend;
 use PHPUnit\Framework\TestCase;
 use Wikimedia\FileBackend\FileBackend;
+use Wikimedia\FileBackend\FSFileBackend;
 
 /**
  * @covers \MWStake\MediaWiki\Component\FileStorageUtilities\StorageHandler
