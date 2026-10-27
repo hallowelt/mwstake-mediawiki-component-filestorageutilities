@@ -2,7 +2,9 @@
 
 namespace MWStake\MediaWiki\Component\FileStorageUtilities;
 
-class TempFSFileBackend extends \FSFileBackend {
+use Wikimedia\FileBackend\FSFileBackend;
+
+class TempFSFileBackend extends FSFileBackend {
 
 	/**
 	 * @param string $filename
